@@ -13,6 +13,9 @@ export default class SelfIntroduction extends React.Component {
 
 
     render() {
+        return (
+            <div></div>
+        )
        
     }
 }

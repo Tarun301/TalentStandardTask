@@ -17,6 +17,7 @@ import Experience from './Experience.jsx';
 import { BodyWrapper, loaderData } from '../Layout/BodyWrapper.jsx';
 import { LoggedInNavigation } from '../Layout/LoggedInNavigation.jsx';
 import TalentStatus from './TalentStatus.jsx';
+import { Description } from './Description.jsx';
 
 export default class AccountProfile extends React.Component {
     constructor(props) {
@@ -31,6 +32,7 @@ export default class AccountProfile extends React.Component {
                 skills: [],
                 experience: [],
                 certifications: [],
+                description: [],
                 visaStatus: '',
                 visaExpiryDate: '',
                 profilePhoto: '',
@@ -136,6 +138,7 @@ export default class AccountProfile extends React.Component {
             phone: this.state.profileData.phone
         }
         return (
+            
             <BodyWrapper reload={this.loadData} loaderData={this.state.loaderData}>
                 <section className="page-body">
                     <div className="ui container">
@@ -168,6 +171,15 @@ export default class AccountProfile extends React.Component {
                                             tooltip='Enter your current address'>
                                             <Address
                                                 addressData={this.state.profileData.address}
+                                                updateProfileData={this.updateWithoutSave}
+                                                saveProfileData={this.updateAndSaveData}
+                                            />
+                                        </FormItemWrapper>
+                                        <FormItemWrapper
+                                            title='Description'
+                                            tooltip='Please provide a short summary about yourself'>
+                                            <Description
+                                                descriptionData={this.state.profileData.description}
                                                 updateProfileData={this.updateWithoutSave}
                                                 saveProfileData={this.updateAndSaveData}
                                             />
@@ -296,4 +308,5 @@ export default class AccountProfile extends React.Component {
             </BodyWrapper>
         )
     }
+    
 }

@@ -13,12 +13,12 @@ export default class TalentDetail extends React.Component {
     }
 
     //componentDidMount() {
-    //    this.loadData()
+     //  this.loadData()
     //}
 
     //loadData()  url: 'http://localhost:60290/profile/profile/getTalentProfile',
    
-    render() {
+   // render() {
         
-    }
+   // }
 }

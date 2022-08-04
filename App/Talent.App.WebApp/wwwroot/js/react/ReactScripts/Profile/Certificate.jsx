@@ -11,6 +11,9 @@ export default class Certificate extends React.Component {
     };
 
     render() {
+        return (
+            <div></div>
+        )
 
     }
 }
