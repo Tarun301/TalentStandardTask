@@ -1,9 +1,8 @@
-﻿import React from 'react'
+﻿import React, { useState } from 'react'
 import Cookies from 'js-cookie'
 import  {Countries} from '../../../../util/jsonFiles/countries.json';
 import { Location } from '../Employer/CreateJob/Location.jsx';
 import { ChildSingleInput } from '../Form/SingleInput.jsx';
-import { Dropdown } from '../Profile/Dropdown.jsx';
 
 export class Address extends React.Component {
     constructor(props) {
@@ -57,10 +56,10 @@ export class Address extends React.Component {
     }
 
     saveMailAddress() {
-        console.log(this.props.componentId)
+        console.log(this.props.profileData)
         console.log(this.state.newMailAddress)
         const data = Object.assign({}, this.state.newMailAddress)
-        this.props.controlFunc(this.props.componentId, data)
+        this.props.profileData(this.props.profileData, data)
         this.closeEdit()
     }
 
@@ -133,7 +132,9 @@ export class Address extends React.Component {
         return (
             <div className='row'>
                 <div className="ui sixteen wide column">
-                    <Dropdown />
+                    <React.Fragment>
+                    <p>Address: {address}</p>
+                    </React.Fragment>
                     <button type="button" className="ui right floated teal button" onClick={this.openEdit}>Edit</button>
                 </div>
             </div>
@@ -143,19 +144,35 @@ export class Address extends React.Component {
 }
 
 export class Nationality extends React.Component {
+    
     constructor(props){
         super(props)
+        this.state = {value: ''};
 
-        
-
+        this.handleChange = this.handleChange.bind(this);
         
     }
+
+    handleChange(event) {
+        this.setState({value: event.target.value});
+    }
+
+    
     
     render (){
         return (
-            <div>
-                
+            <div className='ui sixteen wide column'>
+                <form>
+                    <label>
+                        <select value={this.state.value} onChange={this.handleChange}>
+                            <option value="Select your Nationality">Select your Nationality</option>
+                            <option value="England">England</option>
+                            <option value="New Zealand">New Zealand</option>
+                            <option value="Australia">Australia</option>
+                        </select>
+                    </label>
+                </form>
             </div>
-        )
+        );
     }
 }
