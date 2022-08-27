@@ -6,8 +6,8 @@ export default class Skill extends React.Component {
     constructor(props) {
         super(props);
 
-        const Skill = props.Skill ?
-            Object.assign({}, props.Skill)
+        const details = props.details ?
+            Object.assign({}, props.details)
             : {
                 Skill: "",
                 Level: ""
@@ -15,23 +15,23 @@ export default class Skill extends React.Component {
 
         this.state = {
             showAddSection: false,
-            newSkills: Skill
+            newSkills: details
         }
 
         this.openAdd = this.openAdd.bind(this)
         this.closeAdd = this.closeAdd.bind(this)
         this.handleChange = this.handleChange.bind(this)
-        this.handleSave = this.handleSave.bind(this);
+        this.savenewSkills = this.savenewSkills.bind(this);
         this.renderAdd = this.renderAdd.bind(this)
         this.renderDisplay = this.renderDisplay.bind(this)
 
     }
 
     openAdd() {
-        const Skill = Object.assign({}, this.props.Skill)
+        const details = Object.assign({}, this.props.details)
         this.setState({
             showAddSection: true,
-            newSkills: Skill
+            newSkills: details
         })
     }
 
@@ -50,10 +50,15 @@ export default class Skill extends React.Component {
         
     }
 
-    handleSave(event) {
-        alert('Your Skills is updated Successfully');
-        event.preventDefault();
+    savenewSkills(event) {
+        console.log(this.state.newSkills)
+        const data = Object.assign({}, this.state.newSkills)
+        this.props.updateProfileData(data)
+        this.closeAdd()
+    
     }
+
+   
 
    
 
@@ -88,7 +93,7 @@ export default class Skill extends React.Component {
                     </select>
                 </label>
 
-                <button type="button" className="ui teal button" onClick={this.handleSave}>Save</button>
+                <button type="button" className="ui teal button" onClick={this.savenewSkills}>Save</button>
                 <button type="button" className="ui button" onClick={this.closeAdd}>Cancel</button>
                 </div>
            </form>  

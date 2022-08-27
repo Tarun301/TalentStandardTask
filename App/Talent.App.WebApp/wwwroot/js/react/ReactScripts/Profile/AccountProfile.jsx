@@ -120,7 +120,8 @@ export default class AccountProfile extends React.Component {
                 } else {
                     TalentUtil.notification.show("Profile did not update successfully", "error", null, null)
                 }
-
+                
+                
             }.bind(this),
             error: function (res, a, b) {
                 console.log(res)

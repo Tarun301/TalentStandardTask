@@ -1,32 +1,32 @@
-﻿import React, { useState } from 'react'
+﻿import React from 'react'
 import Cookies from 'js-cookie'
-import  {Countries} from '../../../../util/jsonFiles/countries.json';
-import { Location } from '../Employer/CreateJob/Location.jsx';
+import { Countries } from '../../../../util/jsonFiles/countries.json';
 import { ChildSingleInput } from '../Form/SingleInput.jsx';
 
 export class Address extends React.Component {
     constructor(props) {
         super(props)
 
-        const Address = props.Address ?
-            Object.assign({}, props.Address)
+        const details = props.details ?
+            Object.assign({}, props.details)
             : {
                 number: "",
                 street: "",
                 suburb: "",
+                country: "",
+                city: "",
                 postcode: ""
-
             }
 
         this.state = {
             showEditSection: false,
-            newMailAddress: Address
+            newAddress: details
         }
 
         this.openEdit = this.openEdit.bind(this)
         this.closeEdit = this.closeEdit.bind(this)
         this.handleChange = this.handleChange.bind(this)
-        this.saveMailAddress = this.saveMailAddress.bind(this)
+        this.saveAddress = this.saveAddress.bind(this)
         this.renderEdit = this.renderEdit.bind(this)
         this.renderDisplay = this.renderDisplay.bind(this)
         
@@ -34,10 +34,10 @@ export class Address extends React.Component {
     }
 
     openEdit() {
-        const Address = Object.assign({}, this.props.Address)
+        const details = Object.assign({}, this.props.details)
         this.setState({
             showEditSection: true,
-            newMailAddress: Address
+            newAddress: details
         })
     }
 
@@ -48,18 +48,18 @@ export class Address extends React.Component {
     }
 
     handleChange(event) {
-        const data = Object.assign({}, this.state.newMailAddress)
+        const data = Object.assign({}, this.state.newAddress)
         data[event.target.name] = event.target.value
         this.setState({
-            newMailAddress: data
+            newAddress: data
         })
     }
 
-    saveMailAddress() {
-        console.log(this.props.profileData)
-        console.log(this.state.newMailAddress)
-        const data = Object.assign({}, this.state.newMailAddress)
-        this.props.profileData(this.props.profileData, data)
+    saveAddress(){
+        
+        console.log(this.state.newAddress)
+        const data = Object.assign({}, this.state.newAddress)
+        this.props.saveProfileData(data)
         this.closeEdit()
     }
 
@@ -67,78 +67,116 @@ export class Address extends React.Component {
     render() {
         return (
             this.state.showEditSection ? this.renderEdit() : this.renderDisplay()
-        ) 
+        )
+       
     }
 
     renderEdit() {
         return (
             <div className='ui sixteen wide column'>
                 <ChildSingleInput
-                    inputType="text"
+                    inputType="number"
                     label="Number"
                     name="number"
-                    value={this.state.newMailAddress.number}
+                    value={this.state.newAddress.number}
                     controlFunc={this.handleChange}
-                    maxLength={40}
-                    placeholder="Enter your House Number"
-                    errorMessage="Please enter a valid House Number"
+                    maxLength={10}
+                    placeholder="Enter the House Number"
+                    errorMessage="Please Enter A valid House number"
                 />
                 <ChildSingleInput
                     inputType="text"
                     label="Street"
                     name="street"
-                    value={this.state.newMailAddress.street}
+                    value={this.state.newAddress.street}
                     controlFunc={this.handleChange}
-                    maxLength={80}
-                    placeholder="Enter your street name"
-                    errorMessage="Please enter a valid street name"
+                    maxLength={40}
+                    placeholder="Enter the Street Name"
+                    errorMessage="Please Enter A valid street name"
                 />
                 <ChildSingleInput
                     inputType="text"
                     label="Suburb"
                     name="suburb"
-                    value={this.state.newMailAddress.suburb}
+                    value={this.state.newAddress.suburb}
                     controlFunc={this.handleChange}
-                    maxLength={80}
-                    placeholder="Enter your suburb name"
-                    errorMessage="Please enter a valid suburb name"
+                    maxLength={40}
+                    placeholder="Enter the Suburb Name"
+                    errorMessage="Please Enter A valid Suburb Name"
                 />
-               
-                
                 <ChildSingleInput
                     inputType="text"
-                    label="Post code"
-                    name="postcode"
-                    value={this.state.newMailAddress.postcode}
+                    label="Country"
+                    name="country"
+                    value={this.state.newAddress.country}
                     controlFunc={this.handleChange}
-                    maxLength={80}
-                    placeholder="Enter your post code"
-                    errorMessage="Please enter a valid post code"
+                    maxLength={20}
+                    placeholder="Enter the Country Name"
+                    errorMessage="Please Enter A valid country name"
                 />
-                 
-                
-                <button type="button" className="ui teal button" onClick={this.saveMailAddress}>Save</button>
-                <button type="button" className="ui button" onClick={this.closeEdit}>Cancel</button>
+                <ChildSingleInput
+                    inputType="text"
+                    label="City"
+                    name="city"
+                    value={this.state.newAddress.city}
+                    controlFunc={this.handleChange}
+                    maxLength={20}
+                    placeholder="Enter the City Name"
+                    errorMessage="Please Enter A valid City Name"
+                />
+                <ChildSingleInput
+                    inputType="number"
+                    label="Postcode"
+                    name="postcode"
+                    value={this.state.newAddress.postcode}
+                    controlFunc={this.handleChange}
+                    maxLength={10}
+                    placeholder="Enter the PostCode"
+                    errorMessage="Please Enter A valid PostCode"
+                />
+
+                <button type="button" className='ui teal button' onClick={this.saveAddress}>Save</button>
+                <button type="button" className='ui button' onClick={this.closeEdit}>Cancel</button>
 
             </div>
         )
     }
 
-    renderDisplay() {
-        let address = this.props.Address ? `${this.props.Address.number} ${this.props.Address.street} ${this.props.Address.suburb} ${this.props.Address.postcode}` : ""
-        
+    renderDisplay(){
 
+        let number = this.props.details ? this.props.details.number : ""
+        let street = this.props.details ? this.props.details.street : ""
+        let suburb = this.props.details ? this.props.details.suburb : ""
+        let country = this.props.details ? this.props.details.country : ""
+        let city = this.props.details ? this.props.details.city: ""
+        let postcode = this.props.details ? this.props.details.postcode : ""
 
         return (
             <div className='row'>
-                <div className="ui sixteen wide column">
+                <div className='ui sixteen wide column'>
                     <React.Fragment>
-                    <p>Address: {address}</p>
+                        <div className='ui buttons'>
+                            <button className='ui button'>Number</button>
+                            <button className='ui button'>Street</button>
+                            <button className='ui button'>Suburb</button>
+                            <button className='ui teal button' onClick={this.openEdit}>Edit</button>
+                        </div>
+
+                        <p>{number}</p>
+                        <p>{street}</p>
+                        <p>{suburb}</p>
+                        <p>{country}</p>
+                        <p>{city}</p>
+                        <p>{postcode}</p>
                     </React.Fragment>
-                    <button type="button" className="ui right floated teal button" onClick={this.openEdit}>Edit</button>
+
                 </div>
+
             </div>
         )
+
+
+
     }
 
 }

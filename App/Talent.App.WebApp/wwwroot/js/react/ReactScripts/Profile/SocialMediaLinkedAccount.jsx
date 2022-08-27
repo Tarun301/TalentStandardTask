@@ -7,8 +7,8 @@ export default class SocialMediaLinkedAccount extends React.Component {
     constructor(props) {
         super(props);
 
-        const SocialMediaLinkedAccount = props.SocialMediaLinkedAccount ?
-            Object.assign({}, props.SocialMediaLinkedAccount)
+        const details = props.details ?
+            Object.assign({}, props.details)
             : {
                 LinkedIn: "",
                 GitHub: ""
@@ -16,7 +16,7 @@ export default class SocialMediaLinkedAccount extends React.Component {
 
         this.state = {
             showEditSection: false,
-            newLinkedAccounts: SocialMediaLinkedAccount
+            newLinkedAccounts: details
         }
 
         this.openEdit = this.openEdit.bind(this)
@@ -30,10 +30,10 @@ export default class SocialMediaLinkedAccount extends React.Component {
     }
 
     openEdit() {
-        const SocialMediaLinkedAccount = Object.assign({}, this.props.SocialMediaLinkedAccount)
+        const details = Object.assign({}, this.props.details)
         this.setState({
             showEditSection: true,
-            newLinkedAccounts: SocialMediaLinkedAccount
+            newLinkedAccounts: details
         })
     }
 
@@ -61,8 +61,10 @@ export default class SocialMediaLinkedAccount extends React.Component {
     }
 
     saveLinkedAccounts() {
-        console.log(this.props.componentId)
+
         console.log(this.state.newLinkedAccounts)
+        const data = Object.assign({}, this.state.newLinkedAccounts)
+        this.props.saveProfileData(data)
         this.closeEdit()
     }
 

@@ -14,16 +14,19 @@ export class Description extends React.Component {
     update(event) {
         let data = {};
         data[event.target.name] = event.target.value;
-        this.props.updateStateData(data);
+        this.props.saveProfileData(data);
         let description = event.target.value;
         this.setState({
             characters: description.length
         })
+        
     }
 
     render() {
         const characterLimit = 600;
-        let characters = this.props.description ? this.props.description.length : 0;
+        let characters = this.props.description ? this.props.description.length : 150;
+        
+
         
         return (
             <React.Fragment>
@@ -32,10 +35,15 @@ export class Description extends React.Component {
                     <div className="tooltip">Write a description of your company.</div>
                 </div>
                 <div className="ten wide column">
-                    <div className="field" >
-                        <textarea maxLength={characterLimit} name="Description" placeholder="Please tell us about any hobbies, additional expertise, or anything else you’d like to add." value={this.props.description} onChange={this.update} ></textarea>
+                    <div className='field'>
+                        <textarea maxLength={characterLimit} name='summary' placeholder='Please provide a Short summary about yourself' value={this.props.summary}></textarea>
+                        <p>Summary must be no more than { characters } characters</p>
                     </div>
-                    <p>Characters remaining : {characters} / {characterLimit}</p>
+                    <div className="field" >
+                        <textarea maxLength={characterLimit} name="Description" placeholder="Please tell us about any hobbies, additional expertise, or anything else you’d like to add." value={this.props.description} ></textarea>
+                    </div>
+                    <p>Description must be between { characters }- { characterLimit } characters.</p>
+                    <button type="button" className="ui teal button" onClick={this.update}>Save</button>
                 </div>
             </React.Fragment>
         )

@@ -71,7 +71,7 @@ export class IndividualDetailSection extends Component {
                     inputType="text"
                     label="First Name"
                     name="firstName"
-                    value={this.state.newContact.firstName}
+                    value={this.props.firstName || ""}
                     controlFunc={this.handleChange}
                     maxLength={80}
                     placeholder="Enter your first name"
@@ -81,7 +81,7 @@ export class IndividualDetailSection extends Component {
                     inputType="text"
                     label="Last Name"
                     name="lastName"
-                    value={this.state.newContact.lastName}
+                    value={this.props.lastName || ""}
                     controlFunc={this.handleChange}
                     maxLength={80}
                     placeholder="Enter your last name"
@@ -91,7 +91,7 @@ export class IndividualDetailSection extends Component {
                     inputType="text"
                     label="Email address"
                     name="email"
-                    value={this.state.newContact.email}
+                    value={this.props.email || ""}
                     controlFunc={this.handleChange}
                     maxLength={80}
                     placeholder="Enter an email"
@@ -102,7 +102,7 @@ export class IndividualDetailSection extends Component {
                     inputType="text"
                     label="Phone number"
                     name="phone"
-                    value={this.state.newContact.phone}
+                    value={this.props.phone || ""}
                     controlFunc={this.handleChange}
                     maxLength={12}
                     placeholder="Enter a phone number"
