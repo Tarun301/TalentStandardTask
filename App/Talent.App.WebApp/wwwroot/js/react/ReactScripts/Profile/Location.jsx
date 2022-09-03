@@ -1,43 +1,29 @@
 ﻿import React from 'react'
 import Cookies from 'js-cookie'
-import { Countries } from '../../../../util/jsonFiles/countries.json';
+import { default as Countries } from '../../../../util/jsonFiles/countries.json';
 import { ChildSingleInput } from '../Form/SingleInput.jsx';
 
 export class Address extends React.Component {
     constructor(props) {
         super(props)
-
-        const details = props.details ?
-            Object.assign({}, props.details)
-            : {
-                number: "",
-                street: "",
-                suburb: "",
-                country: "",
-                city: "",
-                postcode: ""
-            }
-
         this.state = {
+            addressData:{number:"",street:"",suburb:"",country:"",city:"",postCode:""},
             showEditSection: false,
-            newAddress: details
         }
 
         this.openEdit = this.openEdit.bind(this)
         this.closeEdit = this.closeEdit.bind(this)
         this.handleChange = this.handleChange.bind(this)
-        this.saveAddress = this.saveAddress.bind(this)
+        this.saveContact = this.saveContact.bind(this)
         this.renderEdit = this.renderEdit.bind(this)
         this.renderDisplay = this.renderDisplay.bind(this)
-        
-
     }
 
     openEdit() {
-        const details = Object.assign({}, this.props.details)
+        const details = Object.assign({}, this.props.addressData)
         this.setState({
             showEditSection: true,
-            newAddress: details
+            addressData: details
         })
     }
 
@@ -48,169 +34,193 @@ export class Address extends React.Component {
     }
 
     handleChange(event) {
-        const data = Object.assign({}, this.state.newAddress)
+        const data = this.state.addressData
+        console.log(data)
         data[event.target.name] = event.target.value
+       
         this.setState({
-            newAddress: data
+            addressData: data
         })
     }
 
-    saveAddress(){
-        
-        console.log(this.state.newAddress)
-        const data = Object.assign({}, this.state.newAddress)
-        this.props.saveProfileData(data)
+    saveContact() {
+        if(this.state.addressData.number===""||this.state.addressData.street===""||this.state.addressData.suburb===""
+        ||this.state.addressData.country===""||this.state.addressData.city===""||this.state.addressData.postCode==="")
+        {
+            TalentUtil.notification.show("Please enter address details", "error", null, null)
+        }
+        else{
+        const data = Object.assign({}, this.state.addressData)
+        console.log(data)
+        this.props.saveProfileData(this.props.componentId, data)
         this.closeEdit()
+        }
     }
 
-   
     render() {
-        return (
+        return(
             this.state.showEditSection ? this.renderEdit() : this.renderDisplay()
-        )
+            )
        
     }
-
     renderEdit() {
+        let countriesOptions = [];
+        let citiesOptions = [];
+        let selectedCountry = this.state.addressData.country;
+        let selectedCity = this.state.addressData.city;
+
+        countriesOptions = Object.keys(Countries).map((x) => <option key={x} value={x}>{x}</option>);
+        //selectedCity=""
+        if (selectedCountry != "" && selectedCountry != null ) {
+        var popCities = Countries[selectedCountry].map(y => <option key={y} value={y}> {y}</option>);
+        citiesOptions = <select
+                className="ui dropdown"
+                placeholder="City"
+                value={selectedCity}
+                onChange={this.handleChange}
+                name="city">
+                <option>Select a town or city</option>
+                {popCities}
+            </select>
+            //debugger
+        }
+        else{
+            citiesOptions = <select
+            className="ui dropdown"
+            placeholder="City"
+            value={selectedCity||""}
+            onChange={this.handleChange}
+            name="city">
+            <option value="">Select a town or city</option>
+        </select>
+        }
+
         return (
-            <div className='ui sixteen wide column'>
+            <div className="row">
+            <div className='ui four wide column'>
                 <ChildSingleInput
-                    inputType="number"
+                    inputType="text"
                     label="Number"
                     name="number"
-                    value={this.state.newAddress.number}
+                    value={this.state.addressData.number}
                     controlFunc={this.handleChange}
                     maxLength={10}
-                    placeholder="Enter the House Number"
-                    errorMessage="Please Enter A valid House number"
+                    placeholder="Enter your street number"
+                    errorMessage="Please enter a street number"
                 />
+                </div>
+                <div className='ui eight wide column'>
                 <ChildSingleInput
                     inputType="text"
                     label="Street"
                     name="street"
-                    value={this.state.newAddress.street}
+                    value={this.state.addressData.street}
                     controlFunc={this.handleChange}
                     maxLength={40}
-                    placeholder="Enter the Street Name"
-                    errorMessage="Please Enter A valid street name"
+                    placeholder="Enter street name"
+                    errorMessage="Please enter a street name"
                 />
+                </div>
+                <div className='ui four wide column'>
                 <ChildSingleInput
                     inputType="text"
                     label="Suburb"
                     name="suburb"
-                    value={this.state.newAddress.suburb}
-                    controlFunc={this.handleChange}
-                    maxLength={40}
-                    placeholder="Enter the Suburb Name"
-                    errorMessage="Please Enter A valid Suburb Name"
-                />
-                <ChildSingleInput
-                    inputType="text"
-                    label="Country"
-                    name="country"
-                    value={this.state.newAddress.country}
+                    value={this.state.addressData.suburb}
                     controlFunc={this.handleChange}
                     maxLength={20}
-                    placeholder="Enter the Country Name"
-                    errorMessage="Please Enter A valid country name"
+                    placeholder="Enter suburb area"
+                    errorMessage="Please enter suburb area"
                 />
-                <ChildSingleInput
+                </div>
+                <div className='ui six wide column' style={{marginTop:"10px"}}>
+                Country:
+                <select
+                placeholder="Country"
+                value={selectedCountry}
+                onChange={this.handleChange}
+                name="country">
+                <option value="">Select a country</option>
+                {countriesOptions}
+                </select>
+                </div>
+                <div className='ui six wide column' style={{marginTop:"10px"}}>
+                City: {citiesOptions}
+                </div>
+                <div className='ui four wide column' style={{marginTop:"10px"}}>
+                 <ChildSingleInput
                     inputType="text"
-                    label="City"
-                    name="city"
-                    value={this.state.newAddress.city}
+                    label="Post Code"
+                    name="postCode"
+                    value={this.state.addressData.postCode}
                     controlFunc={this.handleChange}
                     maxLength={20}
-                    placeholder="Enter the City Name"
-                    errorMessage="Please Enter A valid City Name"
+                    placeholder="Enter your postcode"
+                    errorMessage="Please enter postcode"
                 />
-                <ChildSingleInput
-                    inputType="number"
-                    label="Postcode"
-                    name="postcode"
-                    value={this.state.newAddress.postcode}
-                    controlFunc={this.handleChange}
-                    maxLength={10}
-                    placeholder="Enter the PostCode"
-                    errorMessage="Please Enter A valid PostCode"
-                />
+                </div>
 
-                <button type="button" className='ui teal button' onClick={this.saveAddress}>Save</button>
-                <button type="button" className='ui button' onClick={this.closeEdit}>Cancel</button>
-
+                <div className='ui sixteen wide column' style={{marginTop:"10px"}}>
+                <button type="button" className="ui teal button" onClick={this.saveContact}>Save</button>
+                <button type="button" className="ui button" onClick={this.closeEdit}>Cancel</button>
+                </div>
             </div>
         )
     }
-
-    renderDisplay(){
-
-        let number = this.props.details ? this.props.details.number : ""
-        let street = this.props.details ? this.props.details.street : ""
-        let suburb = this.props.details ? this.props.details.suburb : ""
-        let country = this.props.details ? this.props.details.country : ""
-        let city = this.props.details ? this.props.details.city: ""
-        let postcode = this.props.details ? this.props.details.postcode : ""
-
+    renderDisplay() {
+        let address = this.props.addressData ? (this.props.addressData.number +" "+this.props.addressData.street+" "+
+        this.props.addressData.suburb +" "+ this.props.addressData.postCode) : " "
+        let city = this.props.addressData.city
+        let country=this.props.addressData.country
+       
         return (
             <div className='row'>
-                <div className='ui sixteen wide column'>
+                <div className="ui sixteen wide column">
                     <React.Fragment>
-                        <div className='ui buttons'>
-                            <button className='ui button'>Number</button>
-                            <button className='ui button'>Street</button>
-                            <button className='ui button'>Suburb</button>
-                            <button className='ui teal button' onClick={this.openEdit}>Edit</button>
-                        </div>
-
-                        <p>{number}</p>
-                        <p>{street}</p>
-                        <p>{suburb}</p>
-                        <p>{country}</p>
-                        <p>{city}</p>
-                        <p>{postcode}</p>
+                        <p>Address: {address}</p>
+                        <p>City: {city}</p>
+                        <p>Country: {country}</p>
                     </React.Fragment>
-
+                    <button type="button" className="ui right floated teal button" onClick={this.openEdit}>Edit</button>
                 </div>
-
             </div>
         )
-
-
-
     }
 
 }
 
 export class Nationality extends React.Component {
-    
-    constructor(props){
+    constructor(props) {
         super(props)
-        this.state = {value: ''};
-
-        this.handleChange = this.handleChange.bind(this);
-        
+        this.state = {
+            nationalityData:props.nationalityData
+        }
+        this.handleChange = this.handleChange.bind(this)
     }
-
     handleChange(event) {
-        this.setState({value: event.target.value});
+        const data = Object.assign({}, this.state.nationalityData)
+        console.log(data)
+        data[event.target.name] = event.target.value
+        this.setState({
+            nationalityData: data
+        })
+        this.props.controlFunc(this.props.componentId, data)
     }
 
-    
-    
-    render (){
-        return (
-            <div className='ui sixteen wide column'>
-                <form>
-                    <label>
-                        <select value={this.state.value} onChange={this.handleChange}>
-                            <option value="Select your Nationality">Select your Nationality</option>
-                            <option value="England">England</option>
-                            <option value="New Zealand">New Zealand</option>
-                            <option value="Australia">Australia</option>
-                        </select>
-                    </label>
-                </form>
-            </div>
-        );
+    render() {
+        let countriesOptions = [];
+        let selectedCountry = this.props.nationalityData;
+        countriesOptions = Object.keys(Countries).map((x) => <option key={x} value={x}>{x}</option>);
+        return(
+        <div className='ui seven wide column'>
+        <select
+        placeholder="Select your nationality"
+        value={selectedCountry||""}
+        onChange={this.handleChange}
+        name="nationality">
+        <option value="">Select your nationality</option>
+        {countriesOptions}
+        </select>
+        </div>)
     }
 }

@@ -1,129 +1,212 @@
 ﻿/* Language section */
 import React, { Component } from "react";
-import { Button, ButtonGroup } from 'semantic-ui-react';
+import { Button, Table, Icon, Dropdown } from 'semantic-ui-react';
 import Cookies from 'js-cookie';
+import { languageLevel } from '../Employer/common.js'
 
 export default class Language extends Component {
     constructor(props) {
         super(props);
-
-        const details = props.details ?
-            Object.assign({}, props.details)
-            : {
-                language: "",
-                level: ""
-            } 
-
         this.state = {
             showAddSection: false,
-            newLanguages: details
+            tableEditId: "",
+            showTableData: true,
+            options: {
+                id: "",
+                name: "",
+                level: ""
+            }
         }
-
-        this.openAdd = this.openAdd.bind(this)
-        this.closeAdd = this.closeAdd.bind(this)
-        this.handleChange = this.handleChange.bind(this)
-        this.saveLanguages = this.saveLanguages.bind(this);
-        this.renderAdd = this.renderAdd.bind(this)
-        this.renderDisplay = this.renderDisplay.bind(this)
+        
+        this.renderAdd = this.renderAdd.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleChangeText = this.handleChangeText.bind(this);
+        this.addLanguage = this.addLanguage.bind(this);
+        this.handleAddRecord = this.handleAddRecord.bind(this);
+        this.closeEdit = this.closeEdit.bind(this);
+        this.closeEditTable = this.closeEditTable.bind(this);
+        this.editRecord = this.editRecord.bind(this);
+        this.closeRecord = this.closeRecord.bind(this);
+  
 
     }
 
-    openAdd() {
-        const details = Object.assign({}, this.props.details)
-        this.setState({
-            showAddSection: true,
-            newLanguages: details
-        })
+    handleAddRecord(){
+        this.setState({ showAddSection: true });
     }
 
-    closeAdd() {
-        this.setState({
-            showAddSection: false
-        })
-    }
 
-    handleChange(event) {
-        const data = Object.assign({}, this.state.newLanguages)
-        data[event.target.name] = event.target.value
-        this.setState({
-            newLanguages: data
-        })
+    handleChange(event, objReference) {
+       const id = event.target.id;
+       var data = this.state.options;
+       const name = objReference.name;
+       let value = objReference.value;
+       data["level"] = value;
+       this.setState({
+            options: data
+       })
         
     }
 
-    saveLanguages(_event) {
-        console.log(this.state.newLanguages)
-        const data = Object.assign({}, this.state.newLanguages)
-        this.props.updateProfileData(data)
-        this.closeAdd()
+    handleChangeText(event) {
+        const id = event.target.id;
+        var data = this.state.options
+        data["name"] = event.target.value
+        this.setState({
+            options: data
+        })
     }
 
-   
-
-    render() {
-        return (
-            this.state.showAddSection ? this.renderAdd() : this.renderDisplay()
-        )
-    }
-
-
-    renderAdd() {
-        return (
-            
-                <div className='ui sixteen wide column'>
-                    
-
-                <label>
-                    <select value={this.state.value} onChange={this.handleChange}>
-                        <option value="Language">Add Language</option>
-                        <option value="English">English</option>
-                        <option value="Korean">Korean</option>
-                        <option value="French">French</option>
-                        <option value="Urdu">Urdu</option>
-                        <option value="Mandarian Chinese">Mandarian Chinese</option>
-                        <option value="Spanish">Spanish</option>
-                    </select>
-              
-               
-                    <select value={this.state.value} onChange={this.handleChange}>
-                        <option value="Language Level">Language Level</option>
-                        <option value="Basic">Basic</option>
-                        <option value="Conversational">Conversational</option>
-                        <option value="Fluent">Fluent</option>
-                        <option value="Native/Bilingual">Native/Bilingual</option>
-                    </select>
-                </label>
-
-                
-
-                <button type="button" className="ui teal button" onClick={this.saveLanguages}>Save</button>
-                <button type="button" className="ui button" onClick={this.closeAdd}>Cancel</button>
-                </div>
-         
-        )
-
-        
-    }
-
-    renderDisplay(){
+    renderAdd(){
         return(
-            <div className='row'>
-                <div className="ui sixteen wide column">
-                
-                    <React.Fragment>
-                        <ButtonGroup widths='3' >
-                        <Button>Language</Button>
-                        <Button>Level</Button>
-                        <button type="button" className="ui right floated teal button" onClick={this.openAdd}>Add New</button>
-                        </ButtonGroup>
-
-                        
-
-                    </React.Fragment>
-                    
-                </div>
-            </div>
-        )
-    }
-}
-
+          <div className='row'>
+          <div className='ui five wide column'>
+          <input
+          type="text"
+          name="language"
+          placeholder="Add Language"
+          maxLength={12}
+          onChange={this.handleChangeText}
+          id="name"
+          />
+          </div>
+          <div className='ui five wide column'>
+           <Dropdown
+           name="languageLevel"
+           search selection
+           options={languageLevel}
+           onChange={this.handleChange}
+           placeholder="Language Level"
+           className="ui dropdown language"
+           id="level"
+           />
+          </div>
+          <div className='ui six wide column'>
+          <button type="button" className="ui teal button" onClick={this.addLanguage}>Add</button>
+          <button type="button" className="ui button" onClick={this.closeEdit}>Cancel</button>
+          </div>
+          </div>
+          )
+      }
+      closeEdit() {
+          this.setState({ showAddSection: false });
+      }
+      addLanguage() {
+        if(this.state.options.name === "" || this.state.options.level === "")
+        {
+          TalentUtil.notification.show("Please enter language and level", "error", null, null)
+        }
+        else{
+          var arr = [this.state.options]
+          var data = [...arr, ...this.props.languageData]
+          var updateData = {
+              languages: [...data]
+          }
+          this.props.updateProfileData(updateData)
+          this.setState({
+              showAddSection: false, options: { id: "", name: "", level: "" }
+          });
+        }
+      }
+      handleUpdate(index, enteredName, enteredLevel,e) {
+          e.preventDefault();
+          var dataList = this.props.languageData;
+          const list = dataList.map((item, j) => {
+              if (j === index) {
+                  item.name = this.state.options.name ? this.state.options.name : enteredName;
+                  item.level = this.state.options.level ? this.state.options.level : enteredLevel;
+                  return item ;
+              } else {
+                  return item;
+              }
+          });
+          this.props.updateProfileData(list);
+          this.setState({ showTableData: true });
+      }
+      closeEditTable() {
+          this.setState({ showTableData: true });
+      }
+      editRecord(event) {
+          var selectedId = event.target.id;
+          this.setState({ showTableData: false, tableEditId: selectedId });
+      }
+      closeRecord(event) {        
+          event.preventDefault();
+          var id = event.target.id;
+          var deleteLang = this.props.languageData
+          deleteLang = deleteLang.filter(item => id !== item.id)
+          var updateData = {
+              languages: [...deleteLang]
+          }
+          this.props.updateProfileData(updateData);
+          this.setState({ showTableData: true });
+      }
+      render() {
+        const addLanguage=this.state.showAddSection?this.renderAdd():""
+          return (
+            <React.Fragment>
+            {addLanguage}
+            <div className="ui sixteen wide column">
+                              <Table stackable>
+                              <Table.Header>
+                              <Table.Row>
+                              <Table.HeaderCell>Language</Table.HeaderCell>
+                              <Table.HeaderCell>Level</Table.HeaderCell>
+                              <Table.HeaderCell textAlign='right'>
+                              <button type="button" className="ui secondary button" onClick={this.handleAddRecord}>
+                              <Icon name='plus'/>Add New</button>
+                              </Table.HeaderCell>
+                            </Table.Row>
+                          </Table.Header>
+                          <Table.Body>
+                              {this.props.languageData.map((langList, index) =>
+                                      <Table.Row key={langList.id} >
+                                          <Table.Cell >
+                                              {!this.state.showTableData && this.state.tableEditId == langList.id ?
+                                                  <div className="ui sixteen wide column">
+                                                      <input
+                                                          type="text"
+                                                          name="editlanguage"
+                                                          defaultValue={langList.name}
+                                                          maxLength={40}
+                                                          onChange={this.handleChangeText}
+                                                          id="editName"
+                                                      />
+                                                  </div> : <div className="ui sixteen wide column">{langList.name}</div>}
+                                          </Table.Cell>
+                                          <Table.Cell>
+                                              {!this.state.showTableData && this.state.tableEditId == langList.id ?
+                                                  <div className="ui sixteen wide column">
+                                                      <Dropdown
+                                                          name="editlanguageLevel"
+                                                          search selection
+                                                          options={languageLevel}
+                                                          onChange={this.handleChange}
+                                                          defaultValue={langList.level}
+                                                          className="ui dropdown editLanguage"
+                                                          id="editLevel"
+                                                      /></div> : <div className="ui sixteen wide column">{langList.level}</div>
+                                              }
+                                          </Table.Cell>
+                                          <Table.Cell textAlign='right'>
+                                              {!this.state.showTableData && this.state.tableEditId == langList.id ?
+                                                  <div className="ui sixteen wide column" textalign="left">
+                                                      <Button basic color='blue' content='Update' onClick={(e)=>this.handleUpdate(index,langList.name,langList.level,e)} />
+                                                      <Button basic color='red' content='Cancel' onClick={this.closeEditTable} />
+                                                  </div> :
+                                                  <div>
+                                                    <Icon name="pencil" id={langList.id} onClick={this.editRecord} />
+                                                    <Icon name="close" id={langList.id} onClick={this.closeRecord} />
+                                                  </div>
+                                              }
+                                          </Table.Cell>
+                                      </Table.Row>
+                                  )}
+                              </Table.Body>
+                          </Table>
+                          </div>
+                      </React.Fragment>
+                 
+          )
+      }
+  }
