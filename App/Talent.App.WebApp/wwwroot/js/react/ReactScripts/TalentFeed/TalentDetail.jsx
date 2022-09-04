@@ -10,6 +10,9 @@ export default class TalentDetail extends React.Component {
 
     constructor(props) {
         super(props)
+        this.state = {
+            loaderData: loaderData
+        }
     }
 
     //componentDidMount() {
@@ -18,7 +21,7 @@ export default class TalentDetail extends React.Component {
 
     //loadData()  url: 'http://localhost:60290/profile/profile/getTalentProfile',
    
-   // render() {
+    render() {
         
-   // }
+    }
 }
