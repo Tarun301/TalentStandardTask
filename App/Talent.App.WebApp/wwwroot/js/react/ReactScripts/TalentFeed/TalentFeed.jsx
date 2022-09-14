@@ -22,13 +22,13 @@ export default class TalentFeed extends React.Component {
             watchlist: [],
             loaderData: loader,
             loadingFeedData: false,
-            companyDetails: {location:{city:'', country: ''}}
+            companyDetails:{location:{city:'',country:''}}
         }
 
         this.init = this.init.bind(this);
         this.loadEmployerData = this.loadEmployerData.bind(this);
         this.loadTalentData = this.loadTalentData.bind(this);
-        this.handleLoad = this.handleLoad.bind(this);
+        this.handleLoad=this.handleLoad.bind(this)
 
     };
 
@@ -38,19 +38,20 @@ export default class TalentFeed extends React.Component {
         this.setState({ loaderData });//comment this
         this.loadEmployerData();
         this.loadTalentData();
-    }
 
+    }
     componentDidMount() {
         //window.addEventListener('scroll', this.handleScroll);
         this.init()
     };
-
     loadEmployerData() {
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'http://localhost:60290/profile/profile/getEmployerProfile',
+           //url: 'http://localhost:60290/profile/profile/getEmployerProfile',
+           url: 'https://talentserviceprofile.azurewebsites.net/profile/profile/getEmployerProfile',
+          
             headers: {
-                'Authorization': 'Bearer' + cookies,
+                'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
             },
             type: "GET",
@@ -67,15 +68,15 @@ export default class TalentFeed extends React.Component {
             error: function (res) {
                 console.log(res.status)
             }
-        })
-
+        }) 
+     
     }
 
     loadTalentData() {
         var cookies = Cookies.get('talentAuthToken');       
         $.ajax({
-            
-            url: 'http://localhost:60290/profile/profile/getTalent',
+            url: 'https://talentserviceprofile.azurewebsites.net/profile/profile/getTalent',
+            //url: 'http://localhost:60290/profile/profile/getTalent',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -102,8 +103,6 @@ export default class TalentFeed extends React.Component {
             () => this.loadTalentData()
         );
     }
-   
-
    
     render() {
         const feedData = this.state.feedData;

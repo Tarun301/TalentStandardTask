@@ -240,19 +240,23 @@ namespace Talent.Services.Profile.Controllers
 
         [HttpPost("updateProfilePhoto")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
-        public async Task<ActionResult> UpdateProfilePhoto([FromForm] IFormFile file)
+        public async Task<ActionResult> UpdateProfilePhoto(IFormFile file)
         {
-            if {ModelState.IsValid}
+            if (file != null)
             {
-                if (await _profileService.UpdateTalentPhoto(_userAppContext.CurrentUserId, file))
+                try
+                {
+                    await _profileService.UpdateTalentPhoto(_userAppContext.CurrentUserId, file);
+                    return Json(new { Success = true });
+                }
+                catch (Exception e)
                 {
                     return Json(new { Success = false });
                 }
             }
-
-        
+            return Json(new { Success = false });
             //Your code here;
-            //throw new NotImplementedException();
+           // throw new NotImplementedException();
         }
 
         [HttpPost("updateTalentCV")]
@@ -421,17 +425,10 @@ namespace Talent.Services.Profile.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent, employer, recruiter")]
         public async Task<IActionResult> GetTalentProfile(String id = "")
         {
-            try
-            {
-                String talentId = String.IsNullOrWhiteSpace(id) ? _userAppContext.CurrentUserId : id;
-                var userProfile = await _profileService.GetTalentProfile(talentId);
-            
-                return Json(new { Success = true, data = userProfile });
-            }
-            catch (Exception e)
-            {
-                return Json(new { Success = false, message = e });
-            }
+            String talentId = String.IsNullOrWhiteSpace(id) ? _userAppContext.CurrentUserId : id;
+            var userProfile = await _profileService.GetTalentProfile(talentId);
+          
+            return Json(new { Success = true, data = userProfile });
         }
 
         [HttpPost("updateTalentProfile")]
@@ -457,21 +454,21 @@ namespace Talent.Services.Profile.Controllers
                 var result = (await _profileService.GetTalentSnapshotList(_userAppContext.CurrentUserId, false, feed.Position, feed.Number)).ToList();
 
                 // Dummy talent to fill out the list once we run out of data
-                if (result.Count == 0)
-                {
-                    result.Add(
-                            new Models.TalentSnapshotViewModel
-                            {
-                                CurrentEmployment = "Software Developer at XYZ",
-                                Level = "Junior",
-                                Name = "Dummy User...",
-                                PhotoId = "",
-                                Skills = new List<string> { "C#", ".Net Core", "Javascript", "ReactJS", "PreactJS" },
-                                Summary = "Veronika Ossi is a set designer living in New York who enjoys kittens, music, and partying.",
-                                Visa = "Citizen"
-                            }
-                        );
-                }
+                //if (result.Count == 0)
+                //{
+                //    result.Add(
+                //            new Models.TalentSnapshotViewModel
+                //            {
+                //                CurrentEmployment = "Software Developer at XYZ",
+                //                Level = "Junior",
+                //                Name = "Dummy User...",
+                //                PhotoId = "",
+                //                Skills = new List<string> { "C#", ".Net Core", "Javascript", "ReactJS", "PreactJS" },
+                //                Summary = "Veronika Ossi is a set designer living in New York who enjoys kittens, music, and partying.",
+                //                Visa = "Citizen"
+                //            }
+                //        );
+                //}
                 return Json(new { Success = true, Data = result });
             }
             catch (Exception e)
